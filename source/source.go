@@ -19,6 +19,7 @@ var Repo embed.FS
 func Find(language string) ([]byte, error) {
 	var result []byte
 	target := language + suffix
+
 	err := fs.WalkDir(Repo, repoRoot, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return fmt.Errorf("error reading %s %w", repoRoot, err)
@@ -34,7 +35,9 @@ func Find(language string) ([]byte, error) {
 		}
 
 		result = contents
-		return fs.SkipAll // stop walking if we found our target
+
+		// stop walking if we found our target
+		return fs.SkipAll
 	})
 	if err != nil {
 		return nil, err
@@ -60,11 +63,10 @@ func List(all bool) ([]string, error) {
 		}
 
 		if !d.IsDir() && strings.HasSuffix(d.Name(), suffix) {
-			clean := strings.TrimSuffix(d.Name(), suffix)
+			clean := strings.ToLower(strings.TrimSuffix(d.Name(), suffix))
 			result = append(result, clean)
 		}
 		return nil
 	})
-
 	return result, err
 }

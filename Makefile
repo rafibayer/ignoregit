@@ -1,4 +1,4 @@
-.PHONY: modules repo fetch flatten clean
+.PHONY: repo fetch flatten clean modules install
 
 REPO_URL := https://github.com/github/gitignore
 BRANCH := main
@@ -39,3 +39,5 @@ modules:
 	go mod tidy
 	go mod vendor
 
+install: repo modules
+	go install github.com/rafibayer/ignoregit@latest
