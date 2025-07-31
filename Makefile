@@ -1,4 +1,4 @@
-.PHONY: modules repo fetch flatten
+.PHONY: modules repo fetch flatten clean
 
 REPO_URL := https://github.com/github/gitignore
 BRANCH := main
@@ -6,7 +6,7 @@ BRANCH := main
 EMBED_DIR := source
 DEST_DIR := source/repo
 
-repo: fetch flatten
+repo: fetch flatten clean
 
 # fetch and unzip repo contents
 fetch:
@@ -30,6 +30,10 @@ flatten:
 			echo "Skipping non-file symlink: $$symlink -> $$target"; \
 		fi \
 	done
+
+# remove extra directories
+clean:
+	rm -rf $(DEST_DIR)/.github
 
 modules:
 	go mod tidy
