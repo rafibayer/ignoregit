@@ -11,7 +11,8 @@ func listCmd() *cobra.Command {
 	var all bool
 
 	cmd := &cobra.Command{
-		Use: "list",
+		Use:   "list",
+		Short: "list available .gitignore templates",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			langs, err := source.List(all)
 			if err != nil {

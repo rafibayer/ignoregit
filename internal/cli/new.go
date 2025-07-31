@@ -15,8 +15,9 @@ func newCmd() *cobra.Command {
 	var out string
 
 	cmd := &cobra.Command{
-		Use:  "new [language]",
-		Args: cobra.ExactArgs(1),
+		Use:   "new [language]",
+		Short: "create a new .gitignore",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			language := args[0]
 			content, err := source.Find(language)
