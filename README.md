@@ -18,9 +18,9 @@ ignoregit new <template> # --out flag to override default output path: .gitignor
 
 ## How It Works
 The `repo` Makefile target has 3 parts:
-1. `fetch` downloads the contents of `github.com/github/gitignore` and unzip it into this repository under `source/repo`
+1. `fetch` downloads the contents of `github.com/github/gitignore` and unzips it into this repository under `source/repo`
 
-2. `flatten` traverses symlinks in `github.com/github/gitignore` and "flatten" them by replacing them with the symlink target content.
+2. `flatten` traverses symlinks in `github.com/github/gitignore` and "flattens" them by replacing them with the symlink target content.
 This is done because `ignoregit` utilizes [`embed`](https://pkg.go.dev/embed) which does not support irregular files.
 
 3. `clean` removes unused content like the `.github` folder.
