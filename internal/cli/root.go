@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"github.com/rafibayer/ignoregit/source"
 	"github.com/spf13/cobra"
 )
 
@@ -9,8 +10,10 @@ func Root() *cobra.Command {
 		Use: "ignoregit",
 	}
 
-	root.AddCommand(newCmd())
-	root.AddCommand(listCmd())
+	source := source.New()
+
+	root.AddCommand(newCmd(source))
+	root.AddCommand(listCmd(source))
 
 	return root
 }

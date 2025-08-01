@@ -61,3 +61,7 @@ Flags:
   -o, --out string   .gitignore output filename (default ".gitignore")
 ```
 
+## TODO
+- json output
+- namespacing global/community templates
+- search / aliases for templates

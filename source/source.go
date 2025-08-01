@@ -15,16 +15,36 @@ const (
 //go:embed repo/gitignore-main/*
 var Repo embed.FS
 
-func Find(language string) ([]byte, error) {
+type Source struct {
+	// name -> path
+	// prevents us from having to walk Repo if we've
+	// already seen a language on a previous call to find
+	cache map[string]string
+}
+
+func New() *Source {
+	return &Source{
+		cache: make(map[string]string),
+	}
+}
+
+func (s *Source) Find(language string) ([]byte, error) {
 	var result []byte
-	target := language + suffix
+	targetName := language + suffix
+
+	// check the cache before walking Repo
+	if content, err := s.findCached(targetName); err != nil || content != nil {
+		return content, err
+	}
 
 	err := fs.WalkDir(Repo, repoRoot, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return fmt.Errorf("error reading %s %w", repoRoot, err)
 		}
-		name := strings.ToLower(d.Name())
-		if name != target {
+		currentName := strings.ToLower(d.Name())
+		s.putCache(currentName, path)
+
+		if currentName != targetName {
 			return nil
 		}
 
@@ -34,8 +54,6 @@ func Find(language string) ([]byte, error) {
 		}
 
 		result = contents
-
-		// stop walking if we found our target
 		return fs.SkipAll
 	})
 	if err != nil {
@@ -48,7 +66,7 @@ func Find(language string) ([]byte, error) {
 	return result, nil
 }
 
-func List(all bool) ([]string, error) {
+func (s *Source) List(all bool) ([]string, error) {
 	var result []string
 
 	err := fs.WalkDir(Repo, repoRoot, func(filename string, d fs.DirEntry, err error) error {
@@ -56,7 +74,7 @@ func List(all bool) ([]string, error) {
 			return fmt.Errorf("error reading %s %w", repoRoot, err)
 		}
 
-		// skip non-root dirs if all is false
+		// skip non-root dirs if "all" is false
 		if !all && d.IsDir() && filename != repoRoot {
 			return fs.SkipDir
 		}
@@ -68,4 +86,19 @@ func List(all bool) ([]string, error) {
 		return nil
 	})
 	return result, err
+}
+
+// returns the content at a path if we've already seen it.
+// nil content if not found, returns an error if reading Repo fails.
+func (s *Source) findCached(name string) (content []byte, err error) {
+	path, ok := s.cache[name]
+	if !ok {
+		return nil, nil
+	}
+
+	return Repo.ReadFile(path)
+}
+
+func (s *Source) putCache(name string, path string) {
+	s.cache[name] = path
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func listCmd() *cobra.Command {
+func listCmd(source *source.Source) *cobra.Command {
 	var all bool
 
 	cmd := &cobra.Command{
