@@ -40,4 +40,4 @@ modules:
 	go mod vendor
 
 install: repo modules
-	cd cmd/ignoregit && go install .
+	go install .
