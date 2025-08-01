@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/rafibayer/ignoregit/source"
@@ -15,17 +16,21 @@ func newCmd() *cobra.Command {
 	var out string
 
 	cmd := &cobra.Command{
-		Use:   "new [language]",
+		Use:   "new [language...]",
 		Short: "create a new .gitignore",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			language := args[0]
-			content, err := source.Find(language)
-			if err != nil {
-				return err
+			all := make([]byte, 0)
+			for i, lang := range args {
+				content, err := source.Find(lang)
+				if err != nil {
+					return fmt.Errorf("failed to find .gitignore for arg %d %q: %w", i, lang, err)
+				}
+
+				all = append(all, content...)
 			}
 
-			return os.WriteFile(out, content, 0644)
+			return os.WriteFile(out, all, 0644)
 		},
 	}
 

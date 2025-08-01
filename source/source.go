@@ -2,7 +2,6 @@ package source
 
 import (
 	"embed"
-	"errors"
 	"fmt"
 	"io/fs"
 	"strings"
@@ -43,7 +42,7 @@ func Find(language string) ([]byte, error) {
 		return nil, err
 	}
 	if result == nil {
-		return nil, errors.New("not found")
+		return nil, fmt.Errorf("not found: %s", language)
 	}
 
 	return result, nil

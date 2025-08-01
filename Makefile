@@ -33,11 +33,11 @@ flatten:
 
 # remove extra directories
 clean:
-	rm -rf $(DEST_DIR)/.github
+	rm -rf $(DEST_DIR)/gitignore-main/.github
 
 modules:
 	go mod tidy
 	go mod vendor
 
 install: repo modules
-	go install github.com/rafibayer/ignoregit@latest
+	cd cmd/ignoregit && go install .
